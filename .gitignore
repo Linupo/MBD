@@ -2,3 +2,4 @@ elliptic_bitcoin_dataset
 __pycache__
 *.pkl
 *.sav
+*.json

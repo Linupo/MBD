@@ -16,8 +16,6 @@ from pickle import dump
 def normalize_data_and_write_to_json(json_file_path, normalized_json_file_path):
   df = pd.read_json(json_file_path)
 
-  # TODO: scaler should be fitted without the label
-  # might look something like this:
   y = df['elliptic_label']
   X = df.drop(columns=['elliptic_label']) # ismetam nereikalingus
 

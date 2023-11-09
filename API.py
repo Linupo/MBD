@@ -10,10 +10,14 @@ features_json_file = "all_features.json"
 model_file = "RF_model.sav"
 
 app = FastAPI()
+model_RF = load(open(model_file, 'rb'))
+scaler = load(open('scaler.pkl', 'rb'))
+
 
 # ----------------------------------------------------------------------------------------
 # Real data transaction prediction
 # Tx hash for prediction: 4f4ddca2436e5c3f9ecda31a2d1d3209d3f1658e5845bf5d6dfb46c0dc6f1a4b
+# Known bad tx: 48cc5af8141a7be7b396029e5093a9f0fe78ea03076ebd4bc805bd977e93fbcc
 # ----------------------------------------------------------------------------------------
 
 def get_tx_data (hash):
@@ -54,13 +58,12 @@ def preprocess_tx (tx):
             tx_without_strings[feature] = 0
 
     # Remove if it has additional features
-    # union = set(features) | set(tx_without_strings.keys())
-    # for feature in features:
-    #     if key not in union:
-    #         del tx_without_strings[key]
+    new_tx = {}
+    for key, value in tx_without_strings.items():
+        if key in features:
+            new_tx[key] = value
 
-    scaler = load(open('scaler.pkl', 'rb'))
-    df = pd.DataFrame([tx_without_strings])
+    df = pd.DataFrame([new_tx])
     tx = scaler.transform(df)
 
     return (tx)
@@ -73,12 +76,11 @@ async def transaction_legality(txHash: str = None):
     tx = get_tx_data(txHash)
     tx = preprocess_tx(tx)
 
-    model_RF = load(open(model_file, 'rb'))
     y = model_RF.predict(tx)[0]
 
+    predicted = True
     if y == 1:
-        predicted = True
-    if y == 0:
         predicted = False
+    print(y)
 
     return {"txHash": txHash, "isLegal": predicted}
