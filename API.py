@@ -5,11 +5,25 @@ import pandas as pd
 import requests
 from flatten_json import flatten
 from pickle import load
+from fastapi.middleware.cors import CORSMiddleware
+origins = [
+    "http://localhost",
+    "http://localhost:3000",
+]
 
 features_json_file = "all_features.json"
 model_file = "RF_model.sav"
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 model_RF = load(open(model_file, 'rb'))
 scaler = load(open('scaler.pkl', 'rb'))
 
@@ -66,7 +80,6 @@ def preprocess_tx (tx):
     tx = scaler.transform(df)
 
     return (tx)
-
 
 @app.get("/transaction/")
 async def transaction_legality(txHash: str = None):
