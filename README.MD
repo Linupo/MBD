@@ -80,3 +80,12 @@ Where the txHash can be changed into any bitcoin transaction hash. The API endpo
   "isLegal": true
 }
 ```
+
+### Running the t3 app
+
+To run the web application execute the following command:
+
+```
+npm install
+npm run dev
+```

@@ -54,7 +54,6 @@ def preprocess_tx (tx):
 
     for feature in features:
         if feature not in tx_without_strings and feature != 'elliptic_label':
-        # if feature not in tx_without_strings:
             tx_without_strings[feature] = 0
 
     # Remove if it has additional features
