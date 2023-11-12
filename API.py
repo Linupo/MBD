@@ -42,6 +42,14 @@ def get_tx_data (hash):
     except Exception:
         print("Failed to get the Tx data")
 
+def get_wallet_data (addr):
+    try:
+        response = requests.get(f"https://blockchain.info/rawaddr/{addr}")
+        wallet_json = response.json()
+        return wallet_json
+    except Exception:
+        print("Failed to get the wallet data")
+
 def preprocess_tx (tx):
     #flatten
     tx = flatten(tx)
@@ -60,7 +68,7 @@ def preprocess_tx (tx):
         # remove lists, since there seems to be some empty [] in there
         if isinstance(value, list):
             tx_without_strings[key] = 0
-    
+
     # Add missing features
     with open(features_json_file, "r") as f:
         json_features = f.read()
@@ -93,6 +101,29 @@ async def transaction_legality(txHash: str = None):
     predicted = True
     if y == 1:
         predicted = False
-    print(y)
 
     return {"txHash": txHash, "isLegal": predicted}
+
+@app.get("/wallet/")
+async def wallet_legality(walletAddr: str = None):
+    if not walletAddr:
+        return {"No walletAddr"}
+    wallet = get_wallet_data(walletAddr)
+
+    result = []
+    for wallet_tx in wallet['txs']:
+        tx = preprocess_tx(wallet_tx)
+        y = model_RF.predict(tx)[0]
+
+        predicted = True
+        if y == 1:
+            predicted = False
+
+        result.append(
+            {
+                "txHash": wallet_tx['hash'],
+                "isLegal": predicted
+            }
+        )
+
+    return result
