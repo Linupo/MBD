@@ -4,23 +4,52 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { getRequest } from "~/api/network";
 
-export const transactionRequest = () =>
+interface transactionResponse {
+  txHash: string;
+  isLegal: boolean;
+}
+
+export const transactionRequest = (hash: string) =>
   getRequest({
-    path: "transaction/?txHash=48cc5af8141a7be7b396029e5093a9f0fe78ea03076ebd4bc805bd977e93fbcc",
+    path: `transaction/?txHash=${hash}`,
   });
 
 export default function Home() {
-  const [isLegal, setIsLegal] = useState<boolean>(false);
+  const [isLegal, setIsLegal] = useState<boolean>();
+  const [txHash, setTxHash] = useState<string>("");
 
   const fetchData = async () => {
-    await transactionRequest().then((data: any) => console.log(data));
+    await transactionRequest(txHash).then((data: transactionResponse) => {
+      // console.log(data.isLegal);
+      setIsLegal(data.isLegal);
+      console.log(data);
+    });
   };
 
-  useEffect(() => {
-    fetchData()
-      // make sure to catch any error
-      .catch(console.error);
-  }, []);
+  const checkIfLegal = () => {
+    fetchData().catch(console.error);
+  };
 
-  return <></>;
+  return (
+    <>
+      <div>
+        <label>
+          Enter transaction hash:
+          <input
+            style={
+              isLegal == false
+                ? { color: "red" }
+                : isLegal == true
+                ? { color: "green" }
+                : { color: "black" }
+            }
+            type="text"
+            value={txHash}
+            onChange={(e) => setTxHash(e.target.value)}
+          />
+        </label>
+        <button onClick={checkIfLegal}>Check if legal</button>
+      </div>
+    </>
+  );
 }
