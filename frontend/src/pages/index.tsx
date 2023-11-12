@@ -3,13 +3,14 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { getRequest } from "~/api/network";
+import TransactionTable from "~/components/transactionTable";
 
 interface transactionResponse {
   txHash: string;
   isLegal: boolean;
 }
 
-export const transactionRequest = (hash: string) =>
+const transactionRequest = (hash: string) =>
   getRequest({
     path: `transaction/?txHash=${hash}`,
   });
@@ -49,6 +50,7 @@ export default function Home() {
           />
         </label>
         <button onClick={checkIfLegal}>Check if legal</button>
+        <TransactionTable />
       </div>
     </>
   );
