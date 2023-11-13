@@ -32,7 +32,13 @@ export default function TransactionLegalityCheck() {
         Enter transaction hash:
       </div>
       <input
-        className="block w-4 flex-auto rounded-lg border p-2.5 font-mono font-sans text-lg text-cyan-900 placeholder-cyan-700 focus:border-cyan-500 focus:ring-cyan-500 dark:border-cyan-500 dark:bg-gray-700 dark:text-cyan-400 dark:placeholder-cyan-500"
+        className={
+          isLegal
+            ? "block w-4 flex-auto rounded-lg border p-2.5 font-mono font-sans text-lg text-green-900 placeholder-green-700 focus:border-green-500 focus:ring-green-500 dark:border-green-500 dark:bg-gray-700 dark:text-green-400 dark:placeholder-green-500"
+            : isLegal == false
+            ? "block w-4 flex-auto rounded-lg border p-2.5 font-mono font-sans text-lg text-red-900 placeholder-red-700 focus:border-red-500 focus:ring-red-500 dark:border-red-500 dark:bg-gray-700 dark:text-red-400 dark:placeholder-red-500"
+            : "block w-4 flex-auto rounded-lg border p-2.5 font-mono font-sans text-lg text-cyan-900 placeholder-cyan-700 focus:border-cyan-500 focus:ring-cyan-500 dark:border-cyan-500 dark:bg-gray-700 dark:text-cyan-400 dark:placeholder-cyan-500"
+        }
         type="text"
         value={txHash}
         onChange={(e) => setTxHash(e.target.value)}

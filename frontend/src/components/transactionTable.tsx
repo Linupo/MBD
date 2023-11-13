@@ -66,8 +66,14 @@ export default function TransactionTable() {
                   //   ref="https://www.blockchain.com/explorer/transactions/btc/0b0b6b1319403cc759f9e63d8dcbf095bb1e31303d2c5ecc38d180754414b6c9"
                 >
                   <td className="px-6 py-4">{tx.txHash}</td>
-                  <td className="px-6 py-4">
-                    {tx.isLegal ? "Legal" : "Illegal"}
+                  <td
+                    className={
+                      tx.isLegal
+                        ? "px-6 py-4 text-green-300"
+                        : "px-6 py-4 text-red-300"
+                    }
+                  >
+                    <div>{tx.isLegal ? "Legal" : "Illegal"}</div>
                   </td>
                 </tr>
               ))}
