@@ -1,3 +1,4 @@
+import math
 from fastapi import FastAPI
 import requests
 import json
@@ -63,11 +64,8 @@ def preprocess_tx (tx):
     # Remove string features
     tx_without_strings = {}
     for key, value in tx.items():
-        if not isinstance(value, str):
+        if not isinstance(value, str) and not isinstance(value, list):
             tx_without_strings[key] = value
-        # remove lists, since there seems to be some empty [] in there
-        if isinstance(value, list):
-            tx_without_strings[key] = 0
 
     # Add missing features
     with open(features_json_file, "r") as f:
