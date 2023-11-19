@@ -8,4 +8,11 @@ module.exports = function (app) {
       changeOrigin: true,
     }),
   );
+  app.use(
+    "/rawtx",
+    createProxyMiddleware({
+      target: "https://blockchain.info",
+      changeOrigin: true,
+    }),
+  );
 };

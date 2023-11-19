@@ -64,7 +64,7 @@ def preprocess_tx (tx):
     # Remove string features
     tx_without_strings = {}
     for key, value in tx.items():
-        if not isinstance(value, str) and not isinstance(value, list):
+        if isinstance(value, int) or isinstance(value, float):
             tx_without_strings[key] = value
 
     # Add missing features
@@ -91,8 +91,8 @@ def preprocess_tx (tx):
 async def transaction_legality(txHash: str = None):
     if not txHash:
         return {"No txHash"}
-    tx = get_tx_data(txHash)
-    tx = preprocess_tx(tx)
+    rawTx = get_tx_data(txHash)
+    tx = preprocess_tx(rawTx)
 
     y = model_RF.predict(tx)[0]
 
@@ -100,7 +100,7 @@ async def transaction_legality(txHash: str = None):
     if y == 1:
         predicted = False
 
-    return {"txHash": txHash, "isLegal": predicted}
+    return {"txHash": txHash, "isLegal": predicted, "rawTx": rawTx}
 
 @app.get("/wallet/")
 async def wallet_legality(walletAddr: str = None):

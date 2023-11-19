@@ -1,3 +1,4 @@
+import TransactionGraph from "~/components/transactionGraph";
 import TransactionLegalityCheck from "~/components/transactionLegalityCheck";
 import TransactionTable from "~/components/transactionTable";
 
