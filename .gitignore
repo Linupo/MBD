@@ -1,4 +1,6 @@
 elliptic_bitcoin_dataset
 __pycache__
+.venv
 *.pkl
+*.graphml
 *.sav
