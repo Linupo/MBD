@@ -1,6 +1,13 @@
 elliptic_bitcoin_dataset
 __pycache__
+node_modules
 .venv
 *.pkl
 *.graphml
 *.sav
+subset_normalized_json_file_with_scaler.json
+subset_normalized_json_file.json
+subset_pretrained_flat_txs.json
+all_features.json
+elliptic_txs_json.json
+flat_txs.json

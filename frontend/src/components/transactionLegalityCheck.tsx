@@ -56,7 +56,7 @@ export default function TransactionLegalityCheck() {
           </button>
         </div>
       </div>
-      {rawTxData && <TransactionGraph rawTx={rawTxData} />}
+      {/* {rawTxData && <TransactionGraph rawTx={rawTxData} />} */}
     </div>
   );
 }

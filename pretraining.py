@@ -51,11 +51,11 @@ def create_subset(json_data):
   illicit_count = 0
   licit_count = 0
   for item in json_data:
-    if item["elliptic_label"] == '2' and illicit_count != 100:
+    if item["elliptic_label"] == '2' and illicit_count != 1000:
       filtered_list.append(item)
       illicit_count = illicit_count + 1
   for item in json_data:
-    if item["elliptic_label"] == '1' and licit_count != 100:
+    if item["elliptic_label"] == '1' and licit_count != 1000:
       filtered_list.append(item)
       licit_count = licit_count + 1
 

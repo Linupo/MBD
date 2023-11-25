@@ -1,9 +1,36 @@
+import Link from "next/link";
 import { useState } from "react";
 import { getRequest } from "~/api/network";
+import * as luxon from "luxon";
+import toast from "react-hot-toast";
 
+function timestampToDateWithTime(timestamp: number): string {
+  const date = luxon.DateTime.fromMillis(timestamp, { zone: "Europe/Vilnius" });
+  const options = {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+  };
+  return date.toLocaleString(luxon.DateTime.DATETIME_FULL_WITH_SECONDS);
+}
+
+function calculateValue(inputs: any): number {
+  let value = 0;
+  inputs.map((input: any) => {
+    console.log(input);
+    if (input.prev_out.value) {
+      value = value + input.prev_out.value;
+    }
+  });
+  // satoshis to bitcoin conversion
+  return value / 100000000;
+}
 interface transactionResponse {
-  txHash: string;
   isLegal: boolean;
+  rawTx: any;
 }
 
 const walletTransactionsRequest = (hash: string) =>
@@ -19,7 +46,7 @@ export default function TransactionTable() {
     await walletTransactionsRequest(walletAddr).then(
       (data: transactionResponse[]) => {
         setTransactions(data);
-        console.log(data);
+        toast.success("Success");
       },
     );
   };
@@ -55,17 +82,29 @@ export default function TransactionTable() {
             <table className=" text-left text-lg rtl:text-right">
               <thead className="bg-gray-50 text-lg dark:bg-gray-700">
                 <tr>
-                  <th className="px-6 py-3">Transaction Hash</th>
+                  <th className="px-6 py-3">Hash</th>
+                  <th className="px-6 py-3">Time</th>
+                  <th className="px-6 py-3">Value</th>
                   <th className="px-6 py-3">Legality</th>
                 </tr>
               </thead>
               {transactions.map((tx) => (
                 <tr
                   className="border-b bg-white hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-600"
-                  key={tx.txHash}
-                  //   ref="https://www.blockchain.com/explorer/transactions/btc/0b0b6b1319403cc759f9e63d8dcbf095bb1e31303d2c5ecc38d180754414b6c9"
+                  key={tx.rawTx.hash}
                 >
-                  <td className="px-6 py-4">{tx.txHash}</td>
+                  <Link
+                    href={`https://www.blockchain.com/explorer/transactions/btc/${tx.rawTx.hash}`}
+                  >
+                    <td className="px-6 py-4">{tx.rawTx.hash}</td>
+                  </Link>
+                  <td className="px-6 py-4">
+                    {timestampToDateWithTime(tx.rawTx.time * 1000)}
+                  </td>
+                  <td className="px-6 py-4 text-right">
+                    {calculateValue(tx.rawTx.inputs)} BTC
+                  </td>
+
                   <td
                     className={
                       tx.isLegal

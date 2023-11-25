@@ -50,8 +50,8 @@ async def wallet_legality(walletAddr: str = None):
 
         result.append(
             {
-                "txHash": wallet_tx['hash'],
-                "isLegal": predicted
+                "isLegal": predicted,
+                "rawTx": wallet_tx
             }
         )
 
