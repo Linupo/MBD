@@ -82,17 +82,19 @@ export default function TransactionTable() {
             <table className=" text-left text-lg rtl:text-right">
               <thead className="bg-gray-50 text-lg dark:bg-gray-700">
                 <tr>
+                  <th className="px-6 py-3">Index</th>
                   <th className="px-6 py-3">Hash</th>
                   <th className="px-6 py-3">Time</th>
                   <th className="px-6 py-3">Value</th>
                   <th className="px-6 py-3">Legality</th>
                 </tr>
               </thead>
-              {transactions.map((tx) => (
+              {transactions.map((tx, index) => (
                 <tr
                   className="border-b bg-white hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-600"
                   key={tx.rawTx.hash}
                 >
+                  <td className="px-6 py-4">{index + 1}</td>
                   <Link
                     href={`https://www.blockchain.com/explorer/transactions/btc/${tx.rawTx.hash}`}
                   >
