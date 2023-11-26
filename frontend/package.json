@@ -1,6 +1,7 @@
 {
   "name": "frontend",
   "version": "0.1.0",
+  "type": "module",
   "private": true,
   "scripts": {
     "build": "next build",
@@ -16,14 +17,18 @@
     "@t3-oss/env-nextjs": "^0.7.0",
     "axios": "^1.6.1",
     "http-proxy-middleware": "^2.0.6",
+    "luxon": "^3.4.4",
     "next": "^14.0.0",
     "react": "18.2.0",
     "react-cytoscapejs": "^2.0.0",
     "react-dom": "18.2.0",
+    "react-hot-toast": "^2.4.1",
+    "react-router": "^6.20.0",
     "zod": "^3.22.4"
   },
   "devDependencies": {
     "@types/eslint": "^8.44.2",
+    "@types/luxon": "^3.3.5",
     "@types/node": "^18.16.0",
     "@types/react": "^18.2.33",
     "@types/react-cytoscapejs": "^1.2.5",
