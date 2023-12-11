@@ -9,12 +9,22 @@ function timestampToDateWithTime(timestamp: number): string {
   return date.toLocaleString(luxon.DateTime.DATETIME_FULL_WITH_SECONDS);
 }
 
-function calculateValue(inputs: any): number {
+function determineIsTxOutgoing(tx: any, walletAddr: string): boolean {
+  return tx.inputs.some(function (input: any) {
+    return input.prev_out.addr == walletAddr;
+  });
+}
+
+function calculateValue(inputs: any, outputs: any, walletAddr: string): number {
   let value = 0;
+  outputs.map((out: any) => {
+    if (out.value && out.addr == walletAddr) {
+      value = out.value;
+    }
+  });
   inputs.map((input: any) => {
-    console.log(input);
-    if (input.prev_out.value) {
-      value = value + input.prev_out.value;
+    if (input.prev_out.value && input.prev_out.addr == walletAddr) {
+      value = input.prev_out.value;
     }
   });
   // satoshis to bitcoin conversion
@@ -100,9 +110,10 @@ export default function TransactionTable() {
               <thead className="bg-gray-50 text-lg dark:bg-gray-700">
                 <tr>
                   <th className="px-6 py-3">Index</th>
+                  <th className="px-6 py-3">In/Out</th>
+                  <th className="px-6 py-3">Value</th>
                   <th className="px-6 py-3">Hash</th>
                   <th className="px-6 py-3">Time</th>
-                  <th className="px-6 py-3">Value</th>
                   <th className="px-6 py-3">Legality</th>
                 </tr>
               </thead>
@@ -112,6 +123,44 @@ export default function TransactionTable() {
                   key={tx.rawTx.hash}
                 >
                   <td className="px-6 py-4">{index + 1}</td>
+                  <td className="px-6 py-4">
+                    {determineIsTxOutgoing(tx.rawTx, walletAddr) ? (
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.5"
+                        stroke="currentColor"
+                        className="h-6 w-6 text-green-500"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          d="M9 8.25H7.5a2.25 2.25 0 00-2.25 2.25v9a2.25 2.25 0 002.25 2.25h9a2.25 2.25 0 002.25-2.25v-9a2.25 2.25 0 00-2.25-2.25H15M9 12l3 3m0 0l3-3m-3 3V2.25"
+                        />
+                      </svg>
+                    ) : (
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.5"
+                        stroke="currentColor"
+                        className="h-6 w-6 text-red-500"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          d="M9 8.25H7.5a2.25 2.25 0 00-2.25 2.25v9a2.25 2.25 0 002.25 2.25h9a2.25 2.25 0 002.25-2.25v-9a2.25 2.25 0 00-2.25-2.25H15m0-3l-3-3m0 0l-3 3m3-3V15"
+                        />
+                      </svg>
+                    )}
+                  </td>
+                  <td className="px-6 py-4 text-right">
+                    {calculateValue(tx.rawTx.inputs, tx.rawTx.out, walletAddr)}{" "}
+                    BTC
+                  </td>
+
                   <Link
                     href={`https://www.blockchain.com/explorer/transactions/btc/${tx.rawTx.hash}`}
                   >
@@ -119,9 +168,6 @@ export default function TransactionTable() {
                   </Link>
                   <td className="px-6 py-4">
                     {timestampToDateWithTime(tx.rawTx.time * 1000)}
-                  </td>
-                  <td className="px-6 py-4 text-right">
-                    {calculateValue(tx.rawTx.inputs)} BTC
                   </td>
 
                   <td
