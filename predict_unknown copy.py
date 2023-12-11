@@ -9,32 +9,24 @@ scaler_file = "scaler.pkl"
 model_RF = load(open(model_file, 'rb'))
 scaler = load(open(scaler_file, 'rb'))
 
-# define worker function before a Pool is instantiated
-def worker(hash):
-    try:
-        predictions[hash] = predict(hash, scaler, model_RF)
-    except:
-        print('error with item')
-
-pool = Pool(5)
 
 deanonym = pd.read_csv("predicted_unknown.csv")
+predicted = pd.read_csv("predictions_comparison2.csv")
 predictions = {}
-count = len(deanonym)
 
 for idx, txHash in enumerate(deanonym["txHash"]):
-    print (f"predicting {idx}/{count}")
-    if (idx == 10000):
+    if (len(predictions) + len(predicted) == 10000):
         break
-    pool.apply_async(worker, (txHash,))
+    if txHash not in predicted["txHash"].tolist():
+        print (f"predicting {idx}")
+        predictions[txHash] = predict(txHash, scaler, model_RF)
 
-print ("closing pool")
-pool.close()
-pool.join()
 
 with open('predictions_comparison.csv', 'w', newline='') as csvfile:
     writer = csv.writer(csvfile)
     writer.writerow(['txHash', 'prediction'])
     for hash in predictions.keys():
         writer.writerow([hash, predictions[hash]])
+    for idx in range(len(predicted)):
+        writer.writerow([predicted["txHash"][idx], predicted["prediction"][idx]])
 print ("done")
