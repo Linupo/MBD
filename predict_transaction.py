@@ -1,7 +1,9 @@
 import json
+import pickle
 import pandas as pd
 import requests
 from flatten_json import flatten
+from sklearn.preprocessing import LabelEncoder
 # ----------------------------------------------------------------------------------------
 # Real data transaction prediction
 # Tx hash for prediction: 4f4ddca2436e5c3f9ecda31a2d1d3209d3f1658e5845bf5d6dfb46c0dc6f1a4b
@@ -10,11 +12,21 @@ from flatten_json import flatten
 
 features_json_file = "all_features.json"
 
-def predict(txHash, scaler, model):
-    rawTx = get_tx_data(txHash)
-    tx = preprocess_tx(rawTx, scaler)
+def predict(txHash, scaler, model, rawTx=None, preprocessed_tx=None, XGBoost=False):
+    if rawTx is None and preprocessed_tx is None:
+        rawTx = get_tx_data(txHash)
 
-    y = model.predict(tx)[0]
+    if preprocessed_tx is None:
+        tx = preprocess_tx(rawTx, scaler)
+    else:
+        tx = preprocessed_tx
+
+    if (XGBoost):
+        y = model.predict(tx)
+        le = pickle.load(open('models/XGLabelEncoder.pkl', 'rb'))
+        y = 0 if le.inverse_transform(y)[0] == 2 else 1
+    else:
+        y = model.predict(tx)[0]
 
     predicted = True
     if y == 1:

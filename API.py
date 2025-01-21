@@ -19,7 +19,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-model_file = "RF_model.sav"
+model_file = "models/RF_model_20_80.sav"
 scaler_file = "scaler.pkl"
 model_RF = load(open(model_file, 'rb'))
 scaler = load(open(scaler_file, 'rb'))

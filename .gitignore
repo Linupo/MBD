@@ -5,6 +5,7 @@ node_modules
 *.pkl
 *.graphml
 *.sav
+comparison
 subset_normalized_json_file_with_scaler.json
 subset_normalized_json_file.json
 subset_pretrained_flat_txs.json
@@ -12,3 +13,13 @@ all_features.json
 elliptic_txs_json.json
 flat_txs.json
 predicted_unknown.csv
+*.pdf
+*.jpg
+*.csv
+*.json
+
+# Exceptions
+!elliptic_bitcoin_dataset\deanonymized_result.csv
+!elliptic_bitcoin_dataset\elliptic_txs_classes.csv
+!elliptic_bitcoin_dataset\elliptic_txs_edgelist.csv
+!elliptic_bitcoin_dataset\elliptic_txs_features.csv

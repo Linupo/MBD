@@ -20,9 +20,11 @@ df = remove_dataframe_features_with_all_null_values(df)
 X = df.drop(columns=['elliptic_label']) # delete unused
 y = df['elliptic_label']
 
+train_test_ratio = "70/30"
+
 # legal = 2, illegal = 1
 
-X_train, X_test, y_train, y_test = train_test_split(X,y,test_size=0.25,random_state=15)
+X_train, X_test, y_train, y_test = train_test_split(X,y,test_size=0.3,random_state=15)
 
 # -----------------------------------------
 # Random Forest
@@ -36,8 +38,8 @@ print("Accuracy:", accuracy_RF)
 
 cm = confusion_matrix(y_test, y_preds_RF)
 ConfusionMatrixDisplay(confusion_matrix=cm).plot()
-plt.title("Random Forest confusion matrix")
-# plt.show()
+plt.title(f"Random Forest confusion matrix {train_test_ratio}")
+plt.savefig("plots/RF_CF_70-30.jpg")
 
 # -----------------------------------------
 # ADABoost
@@ -50,8 +52,8 @@ print("Accuracy:", accuracy_ADA)
 
 cm = confusion_matrix(y_test, y_preds_ADA)
 ConfusionMatrixDisplay(confusion_matrix=cm).plot()
-plt.title("ADABoost confusion matrix")
-# plt.show()
+plt.title(f"ADABoost confusion matrix {train_test_ratio}")
+plt.savefig("plots/ADA_CF_70-30.jpg")
 
 # -----------------------------------------
 # XGBoost
@@ -68,9 +70,12 @@ print("Accuracy:", accuracy_XGB)
 
 cm = confusion_matrix(y_test, y_preds_XGB)
 ConfusionMatrixDisplay(confusion_matrix=cm).plot()
-plt.title("XGBoost confusion matrix")
-# plt.show()
+plt.title(f"XGBoost confusion matrix {train_test_ratio}")
+plt.savefig("plots/XG_CF_70-30.jpg")
 
-# Save model to file
-filename = 'RF_model.sav'
-dump(model_AdaBoost, open(filename, 'wb'))
+# Save LabelEncoder
+dump(le, open('models/XGLabelEncoder.pkl', 'wb'))
+# Save models to file
+dump(model_RF, open('models/RF_model.sav', 'wb'))
+dump(model_AdaBoost, open('models/ADA_model.sav', 'wb'))
+dump(model_XGBoost, open('models/XG_model.sav', 'wb'))
