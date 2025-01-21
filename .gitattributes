@@ -1,0 +1,6 @@
+*.json filter=lfs diff=lfs merge=lfs -text
+*.xml filter=lfs diff=lfs merge=lfs -text
+*.csv filter=lfs diff=lfs merge=lfs -text
+frontend/tsconfig.json  !filter !diff !merge text 
+frontend/package.json  !filter !diff !merge text 
+frontend/package-lock.json  !filter !diff !merge text 
