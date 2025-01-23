@@ -9,6 +9,8 @@ The model will be build using the following datasets to train the model:
 
 These datasets are not stored inside the repository so first step would be to download them and place them in the repository root, inside a folder named `Elliptic_bitcoin_dataset`. After you've done so the file structure should look like this:
 
+<!-- TODO: update to match the new structure -->
+
 ```c#
 📁 MBD
 ├── API.py // runs the API after the
@@ -28,25 +30,25 @@ These datasets are not stored inside the repository so first step would be to do
 
 ### Getting real transaction data
 
-First thing to do is to run `create_deanonymized_dataset.py` it should create a file: `pretrain/elliptic_txs.json`. It does so by using an https://blockchain.info/rawtx API to get transaction data. This also flattens the transactions and writes them to a file in `pretrain/flat_txs.json`
+First thing to do is to run `src/scripts/create_deanonymized_dataset.py` it should create a file: `src/pretrain/elliptic_txs.json`. It does so by using an https://blockchain.info/rawtx API to get transaction data. This also flattens the transactions and writes them to a file in `src/pretrain/flat_txs.json`
 
 > NOTE: in the code the variables named tx refer to transaction
 > NOTE: Getting real transactions for the first time take time (~1h)
 
 ### Pretraining
 
-Then we do the pretraining (run `pretraining.py`), it does multiple things:
+Then we do the pretraining (run `src/scripts/pretraining.py`), it does multiple things:
 
-- Creates a subset of 200 (since it's easier to create a model trained on 200 observations, as if we used all of the labeled observations the process would take multiple hours). This number can be changed.
+- Creates a subset of 1000 (since it's easier to create a model trained on 1000 observations, as if we used all of the labeled observations the process would take multiple hours). This number can be changed by passing `-s` parameter to the script.
 - Changes the type of `elliptic_label` feature from string to int.
 - Removes all string type features (only numeric features are used for training)
-- Adds missing features. All of the transactions have different lengths of features so in order to fix that we find all the unique features then iterate over all the objects and see which ones are missing, add them with a value of 0. This step also creates a file named `all_features.json` that has a list of all the unique features the dataset has.
+- Adds missing features. All of the transactions have different lengths of features so in order to fix that we find all the unique features then iterate over all the objects and see which ones are missing, add them with a value of 0. This step also creates a file named `src/pretrain/all_features.json` that has a list of all the unique features the dataset has.
 - Convert boolean attribute values into binary type (0 and 1).
-- After all of the above steps are completed it dumps the modified dataset into `subset_pretrained_flat_txs.json`
+- After all of the above steps are completed it dumps the modified dataset into `src/pretrain/subset_pretrained_flat_txs.json`
 
 ### Normalization
 
-The script `normalize.py` does 2 things:
+The script `src/scripts/normalize.py` does 2 things:
 
 1. Creates a `subset_normalized_json_file_with_scaler.json` dataset by normalizing the `subset_pretrained_flat_txs.json`
 2. Creates a scaler `scaler.pkl`. This scaler will be used once we try to feed real-life transaction data to the model

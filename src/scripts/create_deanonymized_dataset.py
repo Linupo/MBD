@@ -118,10 +118,10 @@ def getRealTransactionData(limitUnknown: int):
         logInfo("File elliptic_txs.json already exists. Skipping data fetching.")
 
     if not os.path.exists(os.path.join(script_dir, "../pretrain/unknown_raw_txs.json")):
-        logInfo(f"Getting unknown transaction data from API")
+        logInfo(f"Getting {limitUnknown} unknown transaction data from API")
         json_list_unknown = []
         txs_failed_list = []
-        # legal transactions
+        # unknown transactions
         for i in range(limitUnknown):
             try:
                 logInfo(f"Unknown txs [{i}/{limitUnknown}]", end="\r")
@@ -155,18 +155,21 @@ def flatten_txs():
     2. Flattens each transaction using the `flatten` function.
     3. Writes the flattened transactions to a new JSON file.
     """
+    if not os.path.exists(os.path.join(script_dir, "../pretrain/flat_txs.json")):
 
-    f = open(os.path.join(script_dir, "../pretrain/elliptic_txs.json"))
-    data = json.load(f)
-    flat_txs = []
+        f = open(os.path.join(script_dir, "../pretrain/elliptic_txs.json"))
+        data = json.load(f)
+        flat_txs = []
 
-    logInfo(f"Flattening transaction data")
-    for tx in data:
-        flat_tx = flatten(tx)
-        flat_txs.append(flat_tx)
+        logInfo(f"Flattening transaction data")
+        for tx in data:
+            flat_tx = flatten(tx)
+            flat_txs.append(flat_tx)
 
-    with open(os.path.join(script_dir, "../pretrain/flat_txs.json"), "w") as f:
-        json.dump(flat_txs, f, indent=2)
+        with open(os.path.join(script_dir, "../pretrain/flat_txs.json"), "w") as f:
+            json.dump(flat_txs, f, indent=2)
+    else:
+        logInfo("File flat_txs.json already exists. Skipping data flattening.")
 
 
 if __name__ == "__main__":
