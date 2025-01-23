@@ -28,14 +28,10 @@ These datasets are not stored inside the repository so first step would be to do
 
 ### Getting real transaction data
 
-First thing to do is to run `create_deanonymized_dataset.py` it should create a file: `pretrain/elliptic_txs.json`. It does so by using an https://blockchain.info/rawtx API to get transaction data.
+First thing to do is to run `create_deanonymized_dataset.py` it should create a file: `pretrain/elliptic_txs.json`. It does so by using an https://blockchain.info/rawtx API to get transaction data. This also flattens the transactions and writes them to a file in `pretrain/flat_txs.json`
 
 > NOTE: in the code the variables named tx refer to transaction
 > NOTE: Getting real transactions for the first time take time (~1h)
-
-### Flattening the nested arrays
-
-After the `elliptic_txs.json` is created you must run the `flatten.ipynb`, this script flattens all the nested arrays and dictionaries of the json and dumps it into `flat_txs.json` file.
 
 ### Pretraining
 
