@@ -6,6 +6,8 @@ import os
 from flatten_json import flatten
 from utils import logInfo
 
+script_dir = os.path.dirname(__file__)
+
 
 def parseArguments():
     # Create argument parser
@@ -46,8 +48,12 @@ def getRealTransactionData(limitUnknown: int):
 
     logInfo(f"Reading dataset files")
 
-    classes = pd.read_csv("elliptic_bitcoin_dataset/elliptic_txs_classes.csv")
-    deanonym = pd.read_csv("elliptic_bitcoin_dataset/deanonymized_result.csv")
+    classes = pd.read_csv(
+        os.path.join(script_dir, "../elliptic_bitcoin_dataset/elliptic_txs_classes.csv")
+    )
+    deanonym = pd.read_csv(
+        os.path.join(script_dir, "../elliptic_bitcoin_dataset/deanonymized_result.csv")
+    )
 
     df = classes.merge(deanonym, on=["txId"])
 
@@ -64,7 +70,7 @@ def getRealTransactionData(limitUnknown: int):
     logInfo(f"unknown_txs_list length: {len(unknown_txs)}")
     logInfo(f"Total length: {len(labeled_txs)}")
 
-    if not os.path.exists("pretrain/elliptic_txs.json"):
+    if not os.path.exists(os.path.join(script_dir, "../pretrain/elliptic_txs.json")):
         json_list = []
         txs_failed_list = []
 
@@ -102,55 +108,55 @@ def getRealTransactionData(limitUnknown: int):
 
         logInfo(f"Finished getting illegal transactions, writing to file...")
 
-        os.makedirs("pretrain", exist_ok=True)
-        with open("pretrain/elliptic_txs.json", "w") as f:
+        os.makedirs(os.path.join(script_dir, "../pretrain"), exist_ok=True)
+        with open(os.path.join(script_dir, "../pretrain/elliptic_txs.json"), "w") as f:
             f.writelines(json.dumps(json_list))
 
-        with open("pretrain/failed_txs.json", "w") as f:
+        with open(os.path.join(script_dir, "../pretrain/failed_txs.json"), "w") as f:
             f.writelines(txs_failed_list)
     else:
-        logInfo(
-            "File pretrain/elliptic_txs.json already exists. Skipping data fetching."
-        )
+        logInfo("File elliptic_txs.json already exists. Skipping data fetching.")
 
-    logInfo(f"Getting unknown transaction data from API")
+    if not os.path.exists(os.path.join(script_dir, "../pretrain/unknown_raw_txs.json")):
+        logInfo(f"Getting unknown transaction data from API")
+        json_list_unknown = []
+        txs_failed_list = []
+        # legal transactions
+        for i in range(limitUnknown):
+            try:
+                logInfo(f"Unknown txs [{i}/{limitUnknown}]", end="\r")
+                response = requests.get(
+                    f"https://blockchain.info/rawtx/{unknown_txs['transaction'].iloc[i]}"
+                )
+                tx_json = response.json()
+                json_list_unknown.append(tx_json)
+            except Exception:
+                txs_failed_list.append(unknown_txs["transaction"].iloc[i])
 
-    json_list_unknown = []
-    txs_failed_list = []
-    # legal transactions
-    for i in range(limitUnknown):
-        try:
-            logInfo(f"Unknown txs [{i}/{limitUnknown}]", end="\r")
-            response = requests.get(
-                f"https://blockchain.info/rawtx/{unknown_txs['transaction'].iloc[i]}"
-            )
-            tx_json = response.json()
-            json_list_unknown.append(tx_json)
-        except Exception:
-            txs_failed_list.append(unknown_txs["transaction"].iloc[i])
+        logInfo(f"Finished getting unknown transactions, writing to file...")
 
-    logInfo(f"Finished getting unknown transactions")
+        with open(
+            os.path.join(script_dir, "../pretrain/unknown_raw_txs.json"), "w"
+        ) as f:
+            f.writelines(json.dumps(json_list_unknown))
 
-    logInfo(f"Writing to file")
-
-    with open("pretrain/unknown_raw_txs.json", "w") as f:
-        f.writelines(json.dumps(json_list_unknown))
-
-    with open("pretrain/failed_txs.json", "w") as f:
-        f.writelines(txs_failed_list)
+        with open(os.path.join(script_dir, "../pretrain/failed_txs.json"), "w") as f:
+            f.writelines(txs_failed_list)
+    else:
+        logInfo("File unknown_raw_txs.json already exists. Skipping data fetching.")
 
 
 def flatten_txs():
     """
-    This function reads transaction data from 'pretrain/elliptic_txs.json', flattens each transaction,
-    and writes the flattened transactions to 'pretrain/flat_txs.json'.
+    This function reads transaction data from 'elliptic_txs.json', flattens each transaction,
+    and writes the flattened transactions to 'flat_txs.json'.
     The function performs the following steps:
     1. Opens and reads the JSON file containing transaction data.
     2. Flattens each transaction using the `flatten` function.
     3. Writes the flattened transactions to a new JSON file.
     """
 
-    f = open("pretrain/elliptic_txs.json")
+    f = open(os.path.join(script_dir, "../pretrain/elliptic_txs.json"))
     data = json.load(f)
     flat_txs = []
 
@@ -159,7 +165,7 @@ def flatten_txs():
         flat_tx = flatten(tx)
         flat_txs.append(flat_tx)
 
-    with open("pretrain/flat_txs.json", "w") as f:
+    with open(os.path.join(script_dir, "../pretrain/flat_txs.json"), "w") as f:
         json.dump(flat_txs, f, indent=2)
 
 
@@ -170,6 +176,8 @@ if __name__ == "__main__":
     # Get real transaction data
     if not args.skipAPIFetch:
         getRealTransactionData(args.limitUnknown)
+    else:
+        logInfo("Skipping API real data fetching.")
 
     # Flatten transactions
     flatten_txs()
