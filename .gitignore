@@ -17,9 +17,3 @@ predicted_unknown.csv
 *.jpg
 *.csv
 *.json
-
-# Exceptions
-!elliptic_bitcoin_dataset\deanonymized_result.csv
-!elliptic_bitcoin_dataset\elliptic_txs_classes.csv
-!elliptic_bitcoin_dataset\elliptic_txs_edgelist.csv
-!elliptic_bitcoin_dataset\elliptic_txs_features.csv
