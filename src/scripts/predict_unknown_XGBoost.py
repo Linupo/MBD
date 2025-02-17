@@ -1,8 +1,6 @@
 import csv
 import json
-from multiprocessing.pool import ThreadPool as Pool
-import pandas as pd
-from predict_transaction import get_tx_data, predict, preprocess_tx
+from predict_transaction import predict, preprocess_tx
 from pickle import load
 
 scaler = load(open("scaler.pkl", "rb"))

@@ -50,12 +50,12 @@ Then we do the pretraining (run `src/scripts/pretraining.py`), it does multiple 
 
 The script `src/scripts/normalize.py` does 2 things:
 
-1. Creates a `subset_normalized_json_file_with_scaler.json` dataset by normalizing the `subset_pretrained_flat_txs.json`
-2. Creates a scaler `scaler.pkl`. This scaler will be used once we try to feed real-life transaction data to the model
+1. Creates a `src/pretrain/subset_normalized_json_file_with_scaler.json` dataset by normalizing the `src/pretrain/subset_pretrained_flat_txs.json`
+2. Creates a scaler `src/models/scaler.pkl`. This scaler will be used once we try to feed real-life transaction data to the model
 
 ### Training the random forest model
 
-`RF_on_real_data.py` script splits the 200 observations into test (25%) and train (75%) subsets, trains a random forest classifier, prints the accuracy of the model and dumps the model into `RF_model.sav`.
+`src/scripts/RF_on_real_data.py` script splits the 200 observations into test (25%) and train (75%) subsets, trains a random forest classifier, prints the accuracy of the model and dumps the model into `src/models/RF_model.sav`.
 
 ### Running the API
 
