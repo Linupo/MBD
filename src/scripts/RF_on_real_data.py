@@ -22,7 +22,7 @@ def parseArguments():
     parser.add_argument(
         "-t",
         "--testSize",
-        help="Test split size (e.g. if you specify 0.5, the split for test / trai will be 50/50), default is 0.3",
+        help="Test split size (e.g. if you specify 0.5, the split for test / train will be 50/50), default is 0.3",
         type=float,
         default=0.3,
     )

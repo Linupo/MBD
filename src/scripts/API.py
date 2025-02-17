@@ -1,3 +1,4 @@
+import os
 from fastapi import FastAPI
 from pickle import load
 from fastapi.middleware.cors import CORSMiddleware
@@ -8,7 +9,7 @@ origins = [
     "http://localhost:3000",
 ]
 
-
+script_dir = os.path.dirname(__file__)
 app = FastAPI()
 
 app.add_middleware(
@@ -19,8 +20,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-model_file = "models/RF_model_20_80.sav"
-scaler_file = "scaler.pkl"
+model_file = os.path.join(script_dir, "../models/RF_model.sav")
+scaler_file = os.path.join(script_dir, "../models/scaler.pkl")
 model_RF = load(open(model_file, "rb"))
 scaler = load(open(scaler_file, "rb"))
 

@@ -55,13 +55,18 @@ The script `src/scripts/normalize.py` does 2 things:
 
 ### Training the random forest model
 
-`src/scripts/RF_on_real_data.py` script splits the 200 observations into test (25%) and train (75%) subsets, trains a random forest classifier, prints the accuracy of the model and dumps the model into `src/models/RF_model.sav`.
+`src/scripts/RF_on_real_data.py` script splits the 200 observations into test (25%) and train (75%) subsets, trains a random forest classifier, prints the accuracy of the model and dumps the model into `src/models/RF_model_30_70.sav` (the name is different for different test / train splits).
+
+### Predicting transaction using CLI
+
+Running `python .\src\scripts\predict_transaction.py 48cc5af8141a7be7b396029e5093a9f0fe78ea03076ebd4bc805bd977e93fbcc` will log if the transaction hash provided is legal or not. This requires all the above steps to be completed.
 
 ### Running the API
 
 To run the API enter the following line in repository root terminal:
 
 ```shell
+cd src/scripts/
 uvicorn API:app --reload
 ```
 
