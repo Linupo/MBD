@@ -59,18 +59,22 @@ The script `src/scripts/normalize.py` does 2 things:
 
 ### Predicting transaction using CLI
 
-Running `python .\src\scripts\predict_transaction.py 48cc5af8141a7be7b396029e5093a9f0fe78ea03076ebd4bc805bd977e93fbcc` will log if the transaction hash provided is legal or not. This requires all the above steps to be completed.
+Running `python .\src\scripts\predict_transaction.py 48cc5af8141a7be7b396029e5093a9f0fe78ea03076ebd4bc805bd977e93fbcc` will log if the transaction hash provided is legal or not.
 
-### Running the API
+## Running the API
 
-To run the API enter the following line in repository root terminal:
+### Getting Started with API
+
+Running the API requires all the above steps to be completed. To run the API enter the following line in repository root terminal:
 
 ```shell
 cd src/scripts/
 uvicorn API:app --reload
 ```
 
-This will start the api on http://127.0.0.1:8000. Right now it has one endpoint:
+This will start the api on http://127.0.0.1:8000.
+
+### API EndPoints
 
 ```
 http://127.0.0.1:8000/transaction/?txHash=4f4ddca2436e5c3f9ecda31a2d1d3209d3f1658e5845bf5d6dfb46c0dc6f1a4b
@@ -81,11 +85,14 @@ Where the txHash can be changed into any bitcoin transaction hash. The API endpo
 ```json
 {
   "txHash": "4f4ddca2436e5c3f9ecda31a2d1d3209d3f1658e5845bf5d6dfb46c0dc6f1a4b",
-  "isLegal": true
+  "isLegal": true,
+  "rawTx": {
+	...
+  }
 }
 ```
 
-### Running the t3 app
+## Running the t3 app
 
 To run the web application execute the following command:
 
