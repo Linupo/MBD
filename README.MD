@@ -9,23 +9,33 @@ The model will be build using the following datasets to train the model:
 
 These datasets are not stored inside the repository so first step would be to download them and place them in the repository root, inside a folder named `Elliptic_bitcoin_dataset`. After you've done so the file structure should look like this:
 
-<!-- TODO: update to match the new structure -->
-
 ```c#
 📁 MBD
-├── API.py // runs the API after the
-├── Example.ipynb // contains an example on how to train models on anonymized data
-├── Example_visual.ipynb //contains an example on how to visualize the data
-├── create_deanonymized_dataset.ipynb // sends a series of requests to aquire real data from deanonymized dataset exposed hashes
-├── flatten.ipynb // flattens the real transaction data
-├── normalize.py // normilizes the data and creates a scaler
-├── pretraining.py // prepares the data for normalizing
-├── RF_on_real_data.py // trains model on real data after pretraining and normalization
-└──📁 Elliptic_bitcoin_dataset
-	├── deanonymized_result.csv //contains deanonymized map of transactions
-	├── elliptic_txs_classes.csv
-	├── elliptic_txs_edgelist.csv
-	└── elliptic_txs_features.csv
+├── README.MD
+└──📁 src
+	├──📁 frontend
+	├──📁 elliptic_bitcoin_dataset
+	|	├── deanonymized_result.csv //contains deanonymized map of transactions
+	|	├── elliptic_txs_classes.csv
+	|	├── elliptic_txs_edgelist.csv
+	|	└── elliptic_txs_features.csv
+	└──📁 scripts
+		├── API.py // runs the API after the
+		├── bitcoin_graph2.py
+		├── comparison.py
+		├── create_deanonymized_dataset.py // sends a series of requests to aquire real data from deanonymized dataset exposed hashes
+		├── Example_visual.ipynb //contains an example on how to visualize the data
+		├── Example.ipynb // contains an example on how to train models on anonymized data
+		├── normalize.py // normilizes the data and creates a scaler
+		├── predict_transaction.py // predicts transaction from hash
+		├── predict_unknown_RF_ADA.py
+		├── predict_unknown_XGBoost.py
+		├── pretraining.py // prepares the data for normalizing
+		├── RF_on_real_data.py // trains model on real data after pretraining and normalization
+		├── utils.py // python utilities (e.g. nice logging)
+		├── visualize_transaction.ipynb // visualisation
+		└── Visuals.ipynb // visualisation
+
 ```
 
 ### Getting real transaction data
