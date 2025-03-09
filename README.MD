@@ -31,7 +31,7 @@ These datasets are not stored inside the repository so first step would be to do
 		├── predict_unknown_RF_ADA.py
 		├── predict_unknown_XGBoost.py
 		├── pretraining.py // prepares the data for normalizing
-		├── RF_on_real_data.py // trains model on real data after pretraining and normalization
+		├── train_models.py // trains model on real data after pretraining and normalization
 		├── utils.py // python utilities (e.g. nice logging)
 		├── visualize_transaction.ipynb // visualisation
 		└── Visuals.ipynb // visualisation
@@ -65,7 +65,7 @@ The script `src/scripts/normalize.py` does 2 things:
 
 ### Training the random forest model
 
-`src/scripts/RF_on_real_data.py` script splits the 200 observations into test (25%) and train (75%) subsets, trains a random forest classifier, prints the accuracy of the model and dumps the model into `src/models/RF_model_30_70.sav` (the name is different for different test / train splits).
+`src/scripts/train_models.py` script splits the 200 observations into test (25%) and train (75%) subsets, trains a random forest classifier, prints the accuracy of the model and dumps the model into `src/models/RF_model_30_70.sav` (the name is different for different test / train splits).
 
 ### Predicting transaction using CLI
 
