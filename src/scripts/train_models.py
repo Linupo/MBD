@@ -27,6 +27,12 @@ def parseArguments():
         default=0.3,
     )
 
+    parser.add_argument(
+        "--maxFeatures",
+        help="The number of features to consider when looking for the best split for random forest",
+        type=int,
+    )
+
     # Parse arguments
     args = parser.parse_args()
 
@@ -40,7 +46,7 @@ def remove_dataframe_features_with_all_null_values(dataframe):
     return dataframe
 
 
-def train_random_forests(test_size: float):
+def train_random_forests(args):
     logInfo(f"Reading subset_normalized_json_file_with_scaler.json")
     df = pd.read_json(
         os.path.join(
@@ -52,19 +58,27 @@ def train_random_forests(test_size: float):
     X = df.drop(columns=["elliptic_label"])  # delete unused
     y = df["elliptic_label"]
 
-    train_test_ratio = f"{int((1-test_size)*100)}-{int(test_size*100)}"
+    train_test_ratio = f"{int((1-args.testSize)*100)}-{int(args.testSize*100)}"
 
     # legal = 2, illegal = 1
 
     X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=test_size, random_state=15
+        X, y, test_size=args.testSize, random_state=15
     )
 
     # -----------------------------------------
     # Random Forest
     # -----------------------------------------
     logInfo(f"Training random forest")
-    model_RF = RandomForestClassifier().fit(X_train.values, y_train.values)
+
+    rf_params = {
+        "max_features": args.maxFeatures if args.maxFeatures else "auto",
+    }
+
+    model_RF = RandomForestClassifier(**rf_params).fit(
+        X_train.values,
+        y_train.values,
+    )
     y_preds_RF = model_RF.predict(X_test.values)
 
     accuracy_RF = accuracy_score(y_test, y_preds_RF)
@@ -75,6 +89,29 @@ def train_random_forests(test_size: float):
     ConfusionMatrixDisplay(confusion_matrix=cm).plot()
     plt.title(f"Random Forest confusion matrix {train_test_ratio}")
     plt.savefig(os.path.join(script_dir, f"../plots/RF_CF_{train_test_ratio}.jpg"))
+
+    logInfo(f"Getting RF feature importances")
+    # Get feature importances
+    importances = model_RF.feature_importances_
+
+    # Create a Pandas Series for easier handling and sorting
+    feature_importances = pd.Series(
+        importances, index=[f"{X.columns[i]}" for i in range(X.shape[1])]
+    )
+
+    # Get the top 10 most important features
+    top_10_features = feature_importances.nlargest(10)
+
+    # Plot the top 10 features
+    plt.figure(figsize=(12, 8))  # Adjust figure size as needed
+    top_10_features.plot(kind="barh")
+    plt.title("Top 10 Feature Importances")
+    plt.xlabel("Features")
+    plt.ylabel("Importance")
+    plt.yticks(fontsize=8)
+    plt.savefig(
+        os.path.join(script_dir, f"../plots/RF_Importances_{train_test_ratio}.jpg")
+    )
 
     # -----------------------------------------
     # ADABoost
@@ -90,6 +127,29 @@ def train_random_forests(test_size: float):
     ConfusionMatrixDisplay(confusion_matrix=cm).plot()
     plt.title(f"ADABoost confusion matrix {train_test_ratio}")
     plt.savefig(os.path.join(script_dir, f"../plots/ADA_CF_{train_test_ratio}.jpg"))
+
+    logInfo(f"Getting ADABoost feature importances")
+    # Get feature importances
+    importances = model_AdaBoost.feature_importances_
+
+    # Create a Pandas Series for easier handling and sorting
+    feature_importances = pd.Series(
+        importances, index=[f"{X.columns[i]}" for i in range(X.shape[1])]
+    )
+
+    # Get the top 10 most important features
+    top_10_features = feature_importances.nlargest(10)
+
+    # Plot the top 10 features
+    plt.figure(figsize=(12, 8))  # Adjust figure size as needed
+    top_10_features.plot(kind="barh")
+    plt.title("Top 10 Feature Importances")
+    plt.xlabel("Features")
+    plt.ylabel("Importance")
+    plt.yticks(fontsize=8)
+    plt.savefig(
+        os.path.join(script_dir, f"../plots/ADA_Importances_{train_test_ratio}.jpg")
+    )
 
     # -----------------------------------------
     # XGBoost
@@ -110,6 +170,32 @@ def train_random_forests(test_size: float):
     plt.title(f"XGBoost confusion matrix {train_test_ratio}")
     plt.savefig(os.path.join(script_dir, f"../plots/XG_CF_{train_test_ratio}.jpg"))
 
+    logInfo(f"Getting XGBoost feature importances")
+    # Get feature importances
+    importances = model_XGBoost.feature_importances_
+
+    # Create a Pandas Series for easier handling and sorting
+    feature_importances = pd.Series(
+        importances, index=[f"{X.columns[i]}" for i in range(X.shape[1])]
+    )
+
+    # Get the top 10 most important features
+    top_10_features = feature_importances.nlargest(10)
+
+    # Plot the top 10 features
+    plt.figure(figsize=(12, 8))  # Adjust figure size as needed
+    top_10_features.plot(kind="barh")
+    plt.title("Top 10 Feature Importances")
+    plt.xlabel("Features")
+    plt.ylabel("Importance")
+    plt.yticks(fontsize=8)
+    plt.savefig(
+        os.path.join(script_dir, f"../plots/XG_Importances_{train_test_ratio}.jpg")
+    )
+
+    # -----------------------------------------
+    # Save models to files
+    # -----------------------------------------
     logInfo(f"Saving models to files")
     # Save LabelEncoder
     dump(le, open(os.path.join(script_dir, "../models/XGLabelEncoder.pkl"), "wb"))
@@ -124,4 +210,4 @@ def train_random_forests(test_size: float):
 if __name__ == "__main__":
     # Parse the arguments
     args = parseArguments()
-    train_random_forests(args.testSize)
+    train_random_forests(args)
