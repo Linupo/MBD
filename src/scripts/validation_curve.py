@@ -63,7 +63,6 @@ def createValidationCurve(param_name, param_range, X, y, model):
 
 
 if __name__ == "__main__":
-    # Parse the arguments
     logInfo(f"Reading subset_normalized_json_file_with_scaler.json")
     df = pd.read_json(
         os.path.join(
