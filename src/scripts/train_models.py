@@ -33,6 +33,12 @@ def parseArguments():
         type=int,
     )
 
+    parser.add_argument(
+        "--maxDepth",
+        help="The maximum depth of the tree",
+        type=int,
+    )
+
     # Parse arguments
     args = parser.parse_args()
 
@@ -73,6 +79,7 @@ def train_random_forests(args):
 
     rf_params = {
         "max_features": args.maxFeatures if args.maxFeatures else "auto",
+        "max_depth": args.maxDepth if args.maxDepth else None,
     }
 
     model_RF = RandomForestClassifier(**rf_params).fit(
@@ -89,6 +96,22 @@ def train_random_forests(args):
     ConfusionMatrixDisplay(confusion_matrix=cm).plot()
     plt.title(f"Random Forest confusion matrix {train_test_ratio}")
     plt.savefig(os.path.join(script_dir, f"../plots/RF_CF_{train_test_ratio}.jpg"))
+
+    # Check for overfitting
+    logInfo(f"Checking for Random Forest overfitting")
+    y_preds_RF = model_RF.predict(X_train.values)
+    accuracy_RF = accuracy_score(y_train, y_preds_RF)
+    logInfo(f"Accuracy: {accuracy_RF}")
+
+    logInfo(
+        f"Saving Random Forest confusion matrix to RF_CF_train_{train_test_ratio}.jpg"
+    )
+    cm = confusion_matrix(y_train, y_preds_RF)
+    ConfusionMatrixDisplay(confusion_matrix=cm).plot()
+    plt.title(f"Training dataset Random Forest confusion matrix {train_test_ratio}")
+    plt.savefig(
+        os.path.join(script_dir, f"../plots/RF_CF_train_{train_test_ratio}.jpg")
+    )
 
     logInfo(f"Getting RF feature importances")
     # Get feature importances
@@ -127,6 +150,20 @@ def train_random_forests(args):
     ConfusionMatrixDisplay(confusion_matrix=cm).plot()
     plt.title(f"ADABoost confusion matrix {train_test_ratio}")
     plt.savefig(os.path.join(script_dir, f"../plots/ADA_CF_{train_test_ratio}.jpg"))
+
+    # Check for overfitting
+    logInfo(f"Checking for ADABoost overfitting")
+    y_preds_ADA = model_AdaBoost.predict(X_train.values)
+    accuracy_ADA = accuracy_score(y_train, y_preds_ADA)
+    logInfo(f"Accuracy: {accuracy_ADA}")
+
+    logInfo(f"Saving ADABoost confusion matrix to ADA_CF_train_{train_test_ratio}.jpg")
+    cm = confusion_matrix(y_train, y_preds_ADA)
+    ConfusionMatrixDisplay(confusion_matrix=cm).plot()
+    plt.title(f"Training dataset ADABoost confusion matrix {train_test_ratio}")
+    plt.savefig(
+        os.path.join(script_dir, f"../plots/ADA_CF_train_{train_test_ratio}.jpg")
+    )
 
     logInfo(f"Getting ADABoost feature importances")
     # Get feature importances
@@ -169,6 +206,20 @@ def train_random_forests(args):
     ConfusionMatrixDisplay(confusion_matrix=cm).plot()
     plt.title(f"XGBoost confusion matrix {train_test_ratio}")
     plt.savefig(os.path.join(script_dir, f"../plots/XG_CF_{train_test_ratio}.jpg"))
+
+    # Check for overfitting
+    logInfo(f"Checking for XGBoost overfitting")
+    y_preds_XGB = model_XGBoost.predict(X_train.values)
+    accuracy_XGB = accuracy_score(y_train, y_preds_XGB)
+    logInfo(f"Accuracy: {accuracy_XGB}")
+
+    logInfo(f"Saving XGBoost confusion matrix to XGB_CF_train_{train_test_ratio}.jpg")
+    cm = confusion_matrix(y_train, y_preds_XGB)
+    ConfusionMatrixDisplay(confusion_matrix=cm).plot()
+    plt.title(f"Training dataset XGBoost confusion matrix {train_test_ratio}")
+    plt.savefig(
+        os.path.join(script_dir, f"../plots/XGB_CF_train_{train_test_ratio}.jpg")
+    )
 
     logInfo(f"Getting XGBoost feature importances")
     # Get feature importances

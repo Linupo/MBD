@@ -14,7 +14,7 @@ def parseArguments():
     parser.add_argument(
         "-s",
         "--subsetSize",
-        help="Number of unknown transactions to prepare",
+        help="Number of legal transactions to prepare (legal and illegal transactions will have 1:1 ratio)",
         type=int,
         default=1000,
     )
@@ -79,7 +79,7 @@ with open(os.path.join(script_dir, "../pretrain", "flat_txs.json"), "r") as f:
 
 # subset
 def create_subset(json_data, subsetSize: int):
-    logInfo(f"Creating a subset of size: {subsetSize}")
+    logInfo(f"Creating a subset of size: {subsetSize * 2}")
     filtered_list = []
     illicit_count = 0
     licit_count = 0

@@ -29,7 +29,7 @@ train_sizes, train_scores, test_scores = learning_curve(
     model,
     X,
     y,
-    train_sizes=np.linspace(0.1, 1.0, 10),
+    train_sizes=np.linspace(0.5, 1.0, 10),
     cv=5,
     scoring="accuracy",
 )
