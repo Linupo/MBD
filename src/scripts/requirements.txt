@@ -1,0 +1,10 @@
+blockchain==1.4.4
+fastapi==0.115.11
+flatten_json==0.1.14
+matplotlib==3.10.1
+networkx==3.4.2
+numpy==2.2.3
+pandas==2.2.3
+Requests==2.32.3
+scikit_learn==1.6.1
+xgboost==3.0.0
