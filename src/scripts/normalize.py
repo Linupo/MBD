@@ -1,5 +1,6 @@
 import os
 import pandas as pd
+import json
 from sklearn.preprocessing import StandardScaler
 from pickle import dump
 from utils import logInfo
@@ -29,6 +30,9 @@ def normalize_data_and_write_to_json(
     logInfo(f"Creating scaler")
     scaler = StandardScaler()
     df_scaled = pd.DataFrame(scaler.fit_transform(X), columns=X.columns)
+
+    with open(os.path.join(script_dir, "../pretrain", "all_features.json"), "w") as f:
+        f.write(json.dumps(list(X.columns)))
 
     # save the scaler
     dump(scaler, open(os.path.join(script_dir, "../models", "scaler.pkl"), "wb"))

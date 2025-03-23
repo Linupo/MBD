@@ -47,10 +47,6 @@ def add_missing_features(json_data):
     for obj in json_data:
         features.update(obj.keys())
 
-    # This json will be used to add missing features to the tx we want to classify
-    with open(os.path.join(script_dir, "../pretrain", "all_features.json"), "w") as f:
-        f.write(json.dumps(list(features)))
-
     for obj in json_data:
         for feature in features:
             if feature not in obj:

@@ -10,6 +10,10 @@ from utils import logInfo
 
 script_dir = os.path.dirname(__file__)
 
+rf_params = {
+    "max_depth": 10,
+}
+
 logInfo(f"Reading subset_normalized_json_file_with_scaler.json")
 df = pd.read_json(
     os.path.join(
@@ -23,13 +27,13 @@ y = df["elliptic_label"]
 
 logInfo(f"X count {len(X)}")
 logInfo(f"Creating random forest learning curve graph")
-model = RandomForestClassifier(random_state=42)
+model = RandomForestClassifier(**rf_params)
 
 train_sizes, train_scores, test_scores = learning_curve(
     model,
     X,
     y,
-    train_sizes=np.linspace(0.5, 1.0, 10),
+    train_sizes=np.linspace(0.6, 1.0, 10),
     cv=5,
     scoring="accuracy",
 )

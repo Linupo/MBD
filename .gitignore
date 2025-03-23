@@ -15,5 +15,6 @@ flat_txs.json
 predicted_unknown.csv
 *.pdf
 *.jpg
+*.png
 *.csv
 *.json
