@@ -10,6 +10,7 @@ from xgboost import XGBClassifier
 from pickle import dump
 from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
 from utils import logInfo
+import shap
 
 script_dir = os.path.dirname(__file__)
 
@@ -78,7 +79,7 @@ def train_random_forests(args):
     logInfo(f"Training random forest")
 
     rf_params = {
-        "max_features": args.maxFeatures if args.maxFeatures else "auto",
+        "max_features": args.maxFeatures if args.maxFeatures else None,
         "max_depth": args.maxDepth if args.maxDepth else None,
     }
 
@@ -257,6 +258,18 @@ def train_random_forests(args):
     )
     dump(model_XGBoost, open(os.path.join(script_dir, "../models/XG_model.sav"), "wb"))
 
+    # -----------------------------------------
+    # SHAP analysis
+    # -----------------------------------------
+    logInfo(f"Starting SHAP analysis")
+    explainer = shap.TreeExplainer(model_RF)
+    shap_values = explainer.shap_values(X)
+    shap.initjs()
+    shap.summary_plot(shap_values[:,:,0], X, show=False)
+    plt.savefig(os.path.join(script_dir, f"../plots/RF_summary_plot.png"), bbox_inches='tight')
+    plt.close()
+    shap.plots.violin(shap_values[:,:,0], features=X.columns, show=False)
+    plt.savefig(os.path.join(script_dir, f"../plots/RF_violin_features.png"), bbox_inches='tight')
 
 if __name__ == "__main__":
     # Parse the arguments

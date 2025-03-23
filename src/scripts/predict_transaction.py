@@ -134,7 +134,11 @@ def explain_decision(txHash, tx, model):
     plt.figure(figsize=(10, 5))
     shap.force_plot(loaded_explainer.expected_value[1], shap_values_tx[0, :, 1], tx, matplotlib=True, show=False)
     logInfo(f"Saving explanation to plots/explanations/{txHash}.png")
-    plt.savefig(os.path.join(script_dir, f"plots/explanations/{txHash}.png"), bbox_inches='tight')
+
+    if not os.path.exists(os.path.join(script_dir, "../plots/explanations")):
+        os.makedirs(os.path.join(script_dir, "../plots/explanations"))
+
+    plt.savefig(os.path.join(script_dir, f"../plots/explanations/{txHash}.png"), bbox_inches='tight')
     plt.close()
 
 
