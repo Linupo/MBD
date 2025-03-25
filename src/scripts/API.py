@@ -42,7 +42,13 @@ async def wallet_legality(walletAddr: str = None):
         return {"No walletAddr"}
     wallet = get_wallet_data(walletAddr)
 
-    result = []
+    result = {
+        "n_tx": wallet["n_tx"],
+        "total_received": wallet["total_received"],
+        "total_sent": wallet["total_sent"],
+        "final_balance": wallet["final_balance"],
+        "transactions": []
+        }
     for wallet_tx in wallet["txs"]:
         tx = preprocess_tx(wallet_tx, scaler)
         y = model_RF.predict(tx)[0]
@@ -51,6 +57,6 @@ async def wallet_legality(walletAddr: str = None):
         if y == 1:
             predicted = False
 
-        result.append({"isLegal": predicted, "rawTx": wallet_tx})
+        result["transactions"].append({"isLegal": predicted, "rawTx": wallet_tx})
 
     return result

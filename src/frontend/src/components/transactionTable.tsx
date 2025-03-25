@@ -35,6 +35,21 @@ interface transactionResponse {
   rawTx: any;
 }
 
+interface walletResponse {
+  n_tx: number;
+  total_received: number;
+  total_sent: number;
+  final_balance: number;
+  transactions: transactionResponse[];
+}
+
+interface walletInfo {
+  n_tx: number;
+  total_received: number;
+  total_sent: number;
+  final_balance: number;
+}
+
 const walletTransactionsRequest = (hash: string) =>
   getRequest({
     path: `wallet/?walletAddr=${hash}`,
@@ -44,16 +59,22 @@ export default function TransactionTable() {
   const [transactions, setTransactions] = useState<transactionResponse[]>();
   const [walletAddr, setWalletAddr] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [walletInfo, setWalletInfo] = useState<walletInfo>();
 
   const fetchData = async () => {
     setIsLoading(true);
-    await walletTransactionsRequest(walletAddr).then(
-      (data: transactionResponse[]) => {
-        setTransactions(data);
-        setIsLoading(false);
-        toast.success("Success");
-      },
-    );
+    await walletTransactionsRequest(walletAddr).then((data: walletResponse) => {
+      console.log(data);
+      setWalletInfo({
+        n_tx: data.n_tx,
+        total_received: data.total_received,
+        total_sent: data.total_sent,
+        final_balance: data.final_balance,
+      });
+      setTransactions(data.transactions);
+      setIsLoading(false);
+      toast.success("Success");
+    });
   };
 
   const checkIfWalletTxsLegal = () => {
@@ -102,6 +123,32 @@ export default function TransactionTable() {
           </button>
         </div>
       </div>
+
+      {walletInfo && (
+        <div className=" grid justify-items-center pt-4">
+          <div className="relative overflow-x-auto shadow-md sm:rounded-xl">
+            <table className=" text-left text-lg rtl:text-right">
+              <thead className="bg-gray-50 text-lg dark:bg-gray-700">
+                <tr>
+                    <th className="px-6 py-3 text-center text-2xl font-extrabold" colSpan={4}>Wallet Info</th>
+                </tr>
+                <tr>
+                  <th className="px-6 py-3">Number of transactions</th>
+                  <th className="px-6 py-3">Total received</th>
+                  <th className="px-6 py-3">Total sent</th>
+                  <th className="px-6 py-3">Final balance</th>
+                </tr>
+                <tr className="border-b bg-white hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-600">
+                    <td className="px-6 py-4 text-center">{walletInfo.n_tx}</td>
+                    <td className="px-6 py-4 text-center">{walletInfo.total_received / 100000000} BTC</td>
+                    <td className="px-6 py-4 text-center">{walletInfo.total_sent / 100000000} BTC</td>
+                    <td className="px-6 py-4 text-center">{walletInfo.final_balance / 100000000} BTC</td>
+                </tr>
+              </thead>
+            </table>
+          </div>
+        </div>
+      )}
 
       {transactions && (
         <div className=" grid justify-items-center pt-4">
