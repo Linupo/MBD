@@ -138,7 +138,14 @@ def explain_decision(txHash, tx, model):
     if not os.path.exists(os.path.join(script_dir, "../plots/explanations")):
         os.makedirs(os.path.join(script_dir, "../plots/explanations"))
 
-    plt.savefig(os.path.join(script_dir, f"../plots/explanations/{txHash}.png"), bbox_inches='tight')
+    save_paths = [
+        os.path.join(script_dir, f"../plots/explanations/{txHash}.png"),
+        os.path.join(script_dir, f"../frontend/public/{txHash}.png")
+    ]
+
+    for path in save_paths:
+        os.makedirs(os.path.dirname(path), exist_ok=True)
+        plt.savefig(path, bbox_inches='tight')
     plt.close()
 
 
