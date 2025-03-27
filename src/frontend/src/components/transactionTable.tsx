@@ -130,7 +130,12 @@ export default function TransactionTable() {
             <table className=" text-left text-lg rtl:text-right">
               <thead className="bg-gray-50 text-lg dark:bg-gray-700">
                 <tr>
-                    <th className="px-6 py-3 text-center text-2xl font-extrabold" colSpan={4}>Wallet Info</th>
+                  <th
+                    className="px-6 py-3 text-center text-2xl font-extrabold"
+                    colSpan={4}
+                  >
+                    Wallet Info
+                  </th>
                 </tr>
                 <tr>
                   <th className="px-6 py-3">Number of transactions</th>
@@ -139,10 +144,16 @@ export default function TransactionTable() {
                   <th className="px-6 py-3">Final balance</th>
                 </tr>
                 <tr className="border-b bg-white hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-600">
-                    <td className="px-6 py-4 text-center">{walletInfo.n_tx}</td>
-                    <td className="px-6 py-4 text-center">{walletInfo.total_received / 100000000} BTC</td>
-                    <td className="px-6 py-4 text-center">{walletInfo.total_sent / 100000000} BTC</td>
-                    <td className="px-6 py-4 text-center">{walletInfo.final_balance / 100000000} BTC</td>
+                  <td className="px-6 py-4 text-center">{walletInfo.n_tx}</td>
+                  <td className="px-6 py-4 text-center">
+                    {walletInfo.total_received / 100000000} BTC
+                  </td>
+                  <td className="px-6 py-4 text-center">
+                    {walletInfo.total_sent / 100000000} BTC
+                  </td>
+                  <td className="px-6 py-4 text-center">
+                    {walletInfo.final_balance / 100000000} BTC
+                  </td>
                 </tr>
               </thead>
             </table>

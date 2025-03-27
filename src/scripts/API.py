@@ -31,7 +31,7 @@ async def transaction_legality(txHash: str = None):
     if not txHash:
         return {"No txHash"}
     rawTx = get_tx_data(txHash)
-    predicted = predict(txHash, scaler, model_RF)
+    predicted = predict(txHash, scaler, model_RF, explain=True)
 
     return {"txHash": txHash, "isLegal": predicted, "rawTx": rawTx}
 
