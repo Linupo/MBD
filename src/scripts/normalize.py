@@ -23,7 +23,7 @@ def normalize_data_and_write_to_json(
 
     logInfo(f"Removing columns unused when training")
     y = df["elliptic_label"]
-    X = df.drop(columns=["elliptic_label"])  # Removing unused
+    X = df.drop(columns=["elliptic_label", "time", "block_index", "block_height", "lock_time"])  # Removing unused
 
     # df_scaled = pd.DataFrame(scaler.fit_transform(X),columns = df.columns)
 

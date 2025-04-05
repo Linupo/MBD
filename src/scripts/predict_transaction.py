@@ -124,7 +124,6 @@ def preprocess_tx(tx, scaler):
     return tx
 
 def explain_decision(txHash, tx, model):
-    # Regenerate the Explainer
     loaded_explainer = shap.TreeExplainer(model)
 
     tx = pd.Series(tx[0], index=features)
