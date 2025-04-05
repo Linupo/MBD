@@ -6,9 +6,6 @@ node_modules
 *.graphml
 *.sav
 comparison
-subset_normalized_json_file_with_scaler.json
-subset_normalized_json_file.json
-subset_pretrained_flat_txs.json
 all_features.json
 elliptic_txs.json
 flat_txs.json

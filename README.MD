@@ -60,12 +60,12 @@ Then we do the pretraining (run `src/scripts/pretraining.py`), it does multiple 
 
 The script `src/scripts/normalize.py` does 2 things:
 
-1. Creates a `src/pretrain/subset_normalized_json_file_with_scaler.json` dataset by normalizing the `src/pretrain/subset_pretrained_flat_txs.json`
+1. Creates `src/pretrain/subset_normalized_json_file_with_scaler.json` dataset by normalizing `src/pretrain/subset_pretrained_flat_txs.json`
 2. Creates a scaler `src/models/scaler.pkl`. This scaler will be used once we try to feed real-life transaction data to the model
 
 ### Training the random forest model
 
-`src/scripts/train_models.py` script splits the 200 observations into test (25%) and train (75%) subsets, trains a random forest classifier, prints the accuracy of the model and dumps the model into `src/models/RF_model_30_70.sav` (the name is different for different test / train splits).
+`src/scripts/train_models.py` script trains a random forest, ADABoost, XGBoost classifiers, prints the accuracy of the models and dumps the models into `src/models/<ModelName>.sav` (the name is different for different test / train splits and different classifiers).
 
 ### Predicting transaction using CLI
 

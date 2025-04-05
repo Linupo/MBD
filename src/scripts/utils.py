@@ -1,5 +1,7 @@
 from datetime import datetime
 
+RANDOM_STATE = 99
+TRAIN_TEST_SPLIT = 0.2
 
 def logError(message: str, end="\n"):
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")

@@ -9,24 +9,14 @@ from sklearn.preprocessing import LabelEncoder
 from xgboost import XGBClassifier
 from pickle import dump
 from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
-from utils import logInfo
+from utils import RANDOM_STATE, TRAIN_TEST_SPLIT, logInfo
 import shap
 
 script_dir = os.path.dirname(__file__)
 
-
 def parseArguments():
     # Create argument parser
     parser = argparse.ArgumentParser()
-
-    # Optional arguments
-    parser.add_argument(
-        "-t",
-        "--testSize",
-        help="Test split size (e.g. if you specify 0.5, the split for test / train will be 50/50), default is 0.3",
-        type=float,
-        default=0.3,
-    )
 
     parser.add_argument(
         "--maxFeatures",
@@ -65,12 +55,12 @@ def train_random_forests(args):
     X = df.drop(columns=["elliptic_label"])  # delete unused
     y = df["elliptic_label"]
 
-    train_test_ratio = f"{int((1-args.testSize)*100)}-{int(args.testSize*100)}"
+    train_test_ratio = f"{int((1-TRAIN_TEST_SPLIT)*100)}-{int(TRAIN_TEST_SPLIT*100)}"
 
     # legal = 2, illegal = 1
 
     X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=args.testSize, random_state=15
+        X, y, test_size=TRAIN_TEST_SPLIT, random_state=RANDOM_STATE
     )
 
     # -----------------------------------------
@@ -265,11 +255,17 @@ def train_random_forests(args):
     explainer = shap.TreeExplainer(model_RF)
     shap_values = explainer.shap_values(X)
     shap.initjs()
-    shap.summary_plot(shap_values[:,:,0], X, show=False)
-    plt.savefig(os.path.join(script_dir, f"../plots/RF_summary_plot.png"), bbox_inches='tight')
+    shap.summary_plot(shap_values[:, :, 0], X, show=False)
+    plt.savefig(
+        os.path.join(script_dir, f"../plots/RF_summary_plot.png"), bbox_inches="tight"
+    )
     plt.close()
-    shap.plots.violin(shap_values[:,:,0], features=X.columns, show=False)
-    plt.savefig(os.path.join(script_dir, f"../plots/RF_violin_features.png"), bbox_inches='tight')
+    shap.plots.violin(shap_values[:, :, 0], features=X.columns, show=False)
+    plt.savefig(
+        os.path.join(script_dir, f"../plots/RF_violin_features.png"),
+        bbox_inches="tight",
+    )
+
 
 if __name__ == "__main__":
     # Parse the arguments
