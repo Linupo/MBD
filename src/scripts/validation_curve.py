@@ -74,12 +74,17 @@ if __name__ == "__main__":
     X = df.drop(columns=["elliptic_label"])  # delete unused
     y = df["elliptic_label"]
 
-    model = RandomForestClassifier(random_state=42)
+    rf_params = {}
+
+    model = RandomForestClassifier(**rf_params)
     param_name = "max_depth"  # other possible values: max_depth, min_samples_split, min_samples_leaf
     param_range = np.arange(5, 16, 2)
     createValidationCurve(param_name, param_range, X, y, model)
     param_name = "max_features"
-    param_range = np.arange(10, 5000, 500)
+    param_range = np.arange(10, 2000, 200)
+    createValidationCurve(param_name, param_range, X, y, model)
+    param_name = "min_samples_split"
+    param_range = np.arange(2, 20, 3)
     createValidationCurve(param_name, param_range, X, y, model)
     param_name = "n_estimators"
     param_range = np.arange(10, 250, 20)

@@ -6,13 +6,15 @@ from sklearn.metrics import accuracy_score
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier
 from sklearn.preprocessing import LabelEncoder
+from sklearn.tree import DecisionTreeClassifier
 from xgboost import XGBClassifier
 from pickle import dump
 from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
-from utils import RANDOM_STATE, TRAIN_TEST_SPLIT, logInfo
+from utils import BEST_RF_PARAMS, BEST_TREE_PARAMS, RANDOM_STATE, TRAIN_TEST_SPLIT, logInfo
 import shap
 
 script_dir = os.path.dirname(__file__)
+
 
 def parseArguments():
     # Create argument parser
@@ -68,10 +70,14 @@ def train_random_forests(args):
     # -----------------------------------------
     logInfo(f"Training random forest")
 
-    rf_params = {
-        "max_features": args.maxFeatures if args.maxFeatures else None,
-        "max_depth": args.maxDepth if args.maxDepth else None,
-    }
+    rf_params = (
+        {
+            "max_features": args.maxFeatures if args.maxFeatures else None,
+            "max_depth": args.maxDepth if args.maxDepth else None,
+        }
+        if args.maxFeatures and args.maxDepth
+        else BEST_RF_PARAMS
+    )
 
     model_RF = RandomForestClassifier(**rf_params).fit(
         X_train.values,
@@ -131,7 +137,9 @@ def train_random_forests(args):
     # ADABoost
     # -----------------------------------------
     logInfo(f"Training ADABoost")
-    model_AdaBoost = AdaBoostClassifier().fit(X_train.values, y_train.values)
+    base_clf = DecisionTreeClassifier(**BEST_TREE_PARAMS)
+
+    model_AdaBoost = AdaBoostClassifier(estimator=base_clf, learning_rate=0.01, n_estimators=100).fit(X_train.values, y_train.values)
     y_preds_ADA = model_AdaBoost.predict(X_test.values)
     accuracy_ADA = accuracy_score(y_test, y_preds_ADA)
     logInfo(f"Accuracy: {accuracy_ADA}")
