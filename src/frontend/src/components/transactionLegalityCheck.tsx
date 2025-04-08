@@ -34,6 +34,7 @@ export default function TransactionLegalityCheck() {
   };
 
   const checkIfLegal = () => {
+    setRawTxData(undefined);
     fetchData().catch(console.error);
   };
   return (

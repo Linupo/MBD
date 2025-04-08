@@ -106,7 +106,8 @@ Where the txHash can be changed into any bitcoin transaction hash. The API endpo
 
 To run the web application execute the following command:
 
-```
+```shell
+cd src/frontend/
 npm install
 npm run dev
 ```
