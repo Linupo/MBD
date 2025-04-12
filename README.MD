@@ -71,6 +71,10 @@ The script `src/scripts/normalize.py` does 2 things:
 
 Running `python .\src\scripts\predict_transaction.py 48cc5af8141a7be7b396029e5093a9f0fe78ea03076ebd4bc805bd977e93fbcc` will log if the transaction hash provided is legal or not.
 
+### Visuals
+
+To visualise the trees run python notebook `tree_visuals.ipynb`
+
 ## Running the API
 
 ### Getting Started with API
