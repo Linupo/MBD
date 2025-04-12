@@ -194,7 +194,7 @@ def train_random_forests(args):
     le = LabelEncoder()
     y_train = le.fit_transform(y_train)
     y_test = le.fit_transform(y_test)
-    model_XGBoost = XGBClassifier().fit(X_train, y_train)
+    model_XGBoost = XGBClassifier(learning_rate=0.01, n_estimators=150).fit(X_train, y_train)
 
     y_preds_XGB = model_XGBoost.predict(X_test)
     accuracy_XGB = accuracy_score(y_test, y_preds_XGB)
