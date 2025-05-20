@@ -39,7 +39,7 @@ async def transaction_legality(txHash: str = None):
 @app.get("/wallet/")
 async def wallet_legality(walletAddr: str = None):
     if not walletAddr:
-        return {"No walletAddr"}
+        return {"error": "No walletAddr"}
     wallet = get_wallet_data(walletAddr)
 
     result = {

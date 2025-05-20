@@ -7,6 +7,7 @@ import requests
 from flatten_json import flatten
 from utils import logInfo
 import shap
+import time
 import matplotlib.pyplot as plt
 
 # ----------------------------------------------------------------------------------------
@@ -73,21 +74,35 @@ def predict(
 
 
 def get_tx_data(hash):
-    try:
-        response = requests.get(f"https://blockchain.info/rawtx/{hash}")
-        tx_json = response.json()
-        return tx_json
-    except Exception:
-        logInfo("Failed to get the Tx data from blockchain.info API")
+    retries = 4
+    for attempt in range(retries):
+        try:
+            response = requests.get(f"https://blockchain.info/rawtx/{hash}")
+            response.raise_for_status()  # Raise an exception for HTTP errors
+            tx_json = response.json()
+            return tx_json
+        except requests.exceptions.RequestException as e:
+            logInfo(f"Attempt {attempt + 1} failed: {e}")
+            if attempt < retries - 1:
+                time.sleep(2 ** attempt)  # Exponential backoff
+            else:
+                logInfo("Failed to get the Tx data from blockchain.info API after multiple attempts")
 
 
 def get_wallet_data(addr):
-    try:
-        response = requests.get(f"https://blockchain.info/rawaddr/{addr}")
-        wallet_json = response.json()
-        return wallet_json
-    except Exception:
-        logInfo("Failed to get the wallet data from blockchain.info API")
+    retries = 4
+    for attempt in range(retries):
+        try:
+            response = requests.get(f"https://blockchain.info/rawaddr/{addr}")
+            response.raise_for_status()  # Raise an exception for HTTP errors
+            wallet_json = response.json()
+            return wallet_json
+        except requests.exceptions.RequestException as e:
+            logInfo(f"Attempt {attempt + 1} failed: {e}")
+            if attempt < retries - 1:
+                time.sleep(10 ** attempt)  # Exponential backoff
+            else:
+                logInfo("Failed to get the wallet data from blockchain.info API after multiple attempts")
 
 
 def preprocess_tx(tx, scaler):
@@ -127,7 +142,7 @@ def explain_decision(txHash, tx, model):
     loaded_explainer = shap.TreeExplainer(model)
 
     tx = pd.Series(tx[0], index=features)
-    shap_values_tx = loaded_explainer.shap_values(tx.to_frame().T)
+    shap_values_tx = loaded_explainer.shap_values(tx.to_frame())
 
     shap.initjs()
     plt.figure(figsize=(10, 5))

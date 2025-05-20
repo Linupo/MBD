@@ -22,9 +22,22 @@ def parseArguments():
         default=1000,
     )
     parser.add_argument(
+        "-l",
+        "--limitTransactions",
+        help="Number of good and bad transactions to get from API",
+        type=int,
+    )
+    parser.add_argument(
         "-s",
         "--skipAPIFetch",
         help="Skip API fetching, only flatten",
+        action="store_true",
+        default=False,
+    )
+    parser.add_argument(
+        "-t",
+        "--trimJson",
+        help="Trim json to not include inputs and outputs",
         action="store_true",
         default=False,
     )
@@ -35,7 +48,7 @@ def parseArguments():
     return args
 
 
-def getRealTransactionData(limitUnknown: int):
+def getRealTransactionData(limitUnknown: int, limitTransactions: int, trimJson: bool):
     """
     Fetches and processes real transaction data from data files using API.
     This function performs the following steps:
@@ -77,14 +90,17 @@ def getRealTransactionData(limitUnknown: int):
         logInfo(f"Getting legal transaction data from API")
 
         # legal transactions
-        for i in range(len(good_txs)):
-            logInfo(f"Legal txs [{i}/{len(good_txs)}]", end="\r")
+        n = limitTransactions if limitTransactions else len(good_txs)
+        for i in range(n):
+            logInfo(f"Legal txs [{i}/{n}]", end="\r")
             try:
                 response = requests.get(
                     f"https://blockchain.info/rawtx/{good_txs['transaction'].iloc[i]}"
                 )
                 tx_json = response.json()
                 tx_json["elliptic_label"] = good_txs["class"].iloc[i]
+                if trimJson:
+                    drop_inputs_outputs(tx_json)
                 json_list.append(tx_json)
             except Exception:
                 txs_failed_list.append(good_txs["transaction"].iloc[i])
@@ -94,14 +110,17 @@ def getRealTransactionData(limitUnknown: int):
         logInfo(f"Getting illegal transaction data from API")
 
         # illegal transactions
-        for i in range(len(bad_txs)):
-            logInfo(f"Illegal txs [{i}/{len(bad_txs)}]", end="\r")
+        n = limitTransactions if limitTransactions else len(bad_txs)
+        for i in range(n):
+            logInfo(f"Illegal txs [{i}/{n}]", end="\r")
             try:
                 response = requests.get(
                     f"https://blockchain.info/rawtx/{bad_txs['transaction'].iloc[i]}"
                 )
                 tx_json = response.json()
                 tx_json["elliptic_label"] = bad_txs["class"].iloc[i]
+                if trimJson:
+                    drop_inputs_outputs(tx_json)
                 json_list.append(tx_json)
             except Exception:
                 txs_failed_list.append(bad_txs["transaction"].iloc[i])
@@ -129,6 +148,8 @@ def getRealTransactionData(limitUnknown: int):
                     f"https://blockchain.info/rawtx/{unknown_txs['transaction'].iloc[i]}"
                 )
                 tx_json = response.json()
+                if trimJson:
+                    drop_inputs_outputs(tx_json)
                 json_list_unknown.append(tx_json)
             except Exception:
                 txs_failed_list.append(unknown_txs["transaction"].iloc[i])
@@ -144,6 +165,18 @@ def getRealTransactionData(limitUnknown: int):
             f.writelines(txs_failed_list)
     else:
         logInfo("File unknown_raw_txs.json already exists. Skipping data fetching.")
+
+def drop_inputs_outputs(tx):
+    if "inputs" in tx:
+        del tx["inputs"]
+    if "out" in tx:
+        del tx["out"]
+    if "ver" in tx:
+        del tx["ver"]
+    if "tx_index" in tx:
+        del tx["tx_index"]
+    if "double_spend" in tx:
+        del tx["double_spend"]
 
 
 def flatten_txs():
@@ -178,7 +211,7 @@ if __name__ == "__main__":
 
     # Get real transaction data
     if not args.skipAPIFetch:
-        getRealTransactionData(args.limitUnknown)
+        getRealTransactionData(args.limitUnknown, args.limitTransactions, args.trimJson)
     else:
         logInfo("Skipping API real data fetching.")
 

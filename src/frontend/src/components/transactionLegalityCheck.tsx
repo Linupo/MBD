@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { getRequest } from "~/api/network";
 import TransactionGraph from "./transactionGraph";
+import toast from "react-hot-toast";
 interface transactionResponse {
   txHash: string;
   isLegal: boolean;
@@ -27,7 +28,10 @@ export default function TransactionLegalityCheck() {
 
   const fetchData = async () => {
     await transactionRequest(txHash).then((data: transactionResponse) => {
-      // console.log(data.isLegal);
+      if (data.rawTx.error === "not-found-or-invalid-arg") {
+        toast.error(data.rawTx.message);
+        return;
+      }
       setIsLegal(data.isLegal);
       setRawTxData(data.rawTx);
     });

@@ -57,6 +57,7 @@ const walletTransactionsRequest = (hash: string) =>
 
 export default function TransactionTable() {
   const [transactions, setTransactions] = useState<transactionResponse[]>();
+  const [walletAddrFieldValue, setWalletAddrFieldValue] = useState<string>("");
   const [walletAddr, setWalletAddr] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [walletInfo, setWalletInfo] = useState<walletInfo>();
@@ -65,6 +66,16 @@ export default function TransactionTable() {
     setIsLoading(true);
     await walletTransactionsRequest(walletAddr).then((data: walletResponse) => {
       console.log(data);
+      if (data.transactions === undefined) {
+        toast.error("Wallet does not exist");
+        setIsLoading(false);
+        return;
+      }
+      if (data.n_tx === 0) {
+        toast.success("Wallet exists but has no transactions yet");
+        setIsLoading(false);
+        return;
+      }
       setWalletInfo({
         n_tx: data.n_tx,
         total_received: data.total_received,
@@ -88,14 +99,17 @@ export default function TransactionTable() {
         <input
           className="block w-4 flex-auto rounded-lg border p-2.5 font-sans text-lg placeholder-cyan-700 focus:border-cyan-500 focus:ring-cyan-500 dark:border-cyan-500 dark:bg-gray-700 dark:text-cyan-400 dark:placeholder-cyan-500"
           type="text"
-          value={walletAddr}
-          onChange={(e) => setWalletAddr(e.target.value)}
+          value={walletAddrFieldValue}
+          onChange={(e) => setWalletAddrFieldValue(e.target.value)}
         />
 
         <div className="w-4 flex-auto p-1">
           <button
             className=" rounded border-b-4 border-cyan-700 bg-cyan-500 px-4 py-2 text-left text-lg font-bold duration-150 hover:border-cyan-500 hover:bg-cyan-400"
-            onClick={checkIfWalletTxsLegal}
+            onClick={() => {
+              setWalletAddr(walletAddrFieldValue);
+              checkIfWalletTxsLegal();
+            }}
             disabled={isLoading}
           >
             <svg
