@@ -64,7 +64,7 @@ export default function TransactionTable() {
 
   const fetchData = async () => {
     setIsLoading(true);
-    await walletTransactionsRequest(walletAddr).then((data: walletResponse) => {
+    await walletTransactionsRequest(walletAddrFieldValue).then((data: walletResponse) => {
       console.log(data);
       if (data.transactions === undefined) {
         toast.error("Wallet does not exist");

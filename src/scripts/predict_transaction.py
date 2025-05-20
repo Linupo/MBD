@@ -142,7 +142,7 @@ def explain_decision(txHash, tx, model):
     loaded_explainer = shap.TreeExplainer(model)
 
     tx = pd.Series(tx[0], index=features)
-    shap_values_tx = loaded_explainer.shap_values(tx.to_frame())
+    shap_values_tx = loaded_explainer.shap_values(tx.to_frame().T)
 
     shap.initjs()
     plt.figure(figsize=(10, 5))
